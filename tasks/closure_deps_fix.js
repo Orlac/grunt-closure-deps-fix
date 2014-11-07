@@ -15,10 +15,33 @@ module.exports = function(grunt) {
 
   grunt.registerMultiTask('closure_deps_fix', 'The best Grunt plugin ever.', function() {
     // Merge task-specific and/or target-specific options with these defaults.
-    var string = grunt.file.read(this.options.filepath);
-
-    console.log('string', string);
     
+    var options = this.options({ });
+
+    //console.log('this.options', options);
+    var string = grunt.file.read(options.filepath);
+    string = string.split('\n');
+
+    var res = [];
+
+    for(var i in string){
+    	var s = string[i];
+    	s = s.replace('\r', '');
+
+    	var reg = new RegExp('goog.addDependency\\(\'app', 'img')
+    	if(!reg.test(s)){
+    		res.push(s);	
+    	}
+    }
+
+
+    //console.log('string', res);
+    
+    grunt.file.write(options.filepath, res.join('\n') );
+
+    var compileDone = this.async();
+    compileDone(null);
+
   });
 
 };
